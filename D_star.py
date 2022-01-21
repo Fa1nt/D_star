@@ -6,10 +6,13 @@ class Node:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        # path cost
         self.h = 0
+        # min value of h
         self.k = 0
         self.parent = None
         self.state = "_"
+        # tag
         self.t = "new"
         
     def set_state(self, state):   
@@ -48,15 +51,15 @@ class Graph:
             if x >= 0 and x < self.row and y >= 0 and y < self.col:
                 self.graph[x][y].set_state("#")
 
-    def get_neighbors(self, state):
-        states = []
+    def get_neighbors(self, node):
+        nodes = []
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
-                if state.x + i >= 0 and state.x + i < self.row:
-                    if state.y + j >= 0 and state.y + j < self.col:
+                if node.x + i >= 0 and node.x + i < self.row:
+                    if node.y + j >= 0 and node.y + j < self.col:
                         if i != 0 or j != 0:
-                            states.append(self.graph[state.x + i][state.y + j])
-        return states
+                            nodes.append(self.graph[node.x + i][node.y + j])
+        return nodes
 
 global_path = []
 
@@ -77,16 +80,18 @@ class D_star:
         k_min = min([x.k for x in self.open_list])
         return k_min
 
-    def insert(self, state, h_new):
-        if state.t == "new":
-            state.k = h_new
-        elif state.t == "open":
-            state.k = min(state.k, h_new)
-        elif state.t == "closed":
-            state.k = min(state.h, h_new)
-        state.h = h_new
-        state.t = "open"
-        self.open_list.add(state)
+    def insert(self, node, h_new):
+        if node.t == "new":
+            node.k = h_new
+        elif node.t == "open":
+            node.k = min(node.k, h_new)
+        elif node.t == "closed":
+            node.k = min(node.h, h_new)
+        node.h = h_new
+        node.t = "open"
+        self.open_list.add(node)
+        #print((node.x, node.y))
+        #visited.append((node.x, node.y))
 
     def delete(self, state):
         if state.t == "open":
@@ -162,7 +167,7 @@ class D_star:
         current.set_state("p")
         global_path.append((goal.x, goal.y))
         #print(global_path)
-        return x, y
+        #return x, y
 
 def main():
     # GUI
